@@ -3,6 +3,8 @@
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
     <HelloWorld msg="Probando la template"/>
     <h4>Probando commit </h4>
+    <br>
+    
   </div>
   
 </template>
