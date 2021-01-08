@@ -5,13 +5,213 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <title>Vue</title>
   </head>
   <body>
-    <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <div id="app1">
+      <a v-bind:href="enlace">{{ enlace }}</a>
+      <br>
+
+      <input v-model="ancho"   type="range">{{ancho}}
+      <br>
+      <input v-model="alto" type="range">{{alto}}
+      <br>
+      {{urlCompleta}}
+      <br>
+      <img v-bind:src="urlCompleta" alt="">
+      <hr>
+      
+      <input type="search" v-model="busqueda" placeholder="Buscar persona">
+      <input type="range" v-model="edad">{{edad}}
+        <li v-for="persona in filtroEdad"> {{persona.nombre}} edad {{persona.edad}}</li>
+        <hr>
+      <br>
+      <form v-on:submit="saveUser($event)" >
+        <input type="text" v-model="nuevoNombre" placeholder="Nombre">
+        <input type="number" v-model="nuevaEdad" placeholder="edad">
+        <input type="submit" value="Guardar datos">
+      </form> 
+      <hr>
+      <br><br>
+      <hr>
+      <p>Lista de usuarios de una api(Json)</p>
+      <li v-for="user in usuarios">{{user.title}}</li>
+      <br><br><hr>
+      <h4>Cambia tu contraseña</h4>
+      <br>
+      <input type="password" v-model="password">
+        <p>{{estado}}</p>      
+<form>
+  <label for="nombre">Nombre</label>
+        <label for="direccion">Direccion de envío</label>
+        <select  id="direccion" v-model="direccion">
+          <option value="misma">misma direccion de facturacion</option>
+          <option value="nueva">Introducidr nueva direccion</option>
+        </select>
+
+        <template v-if="direccion==='nueva'">
+        <label for="nueva-direccion">Nueva dirección</label>
+        <textarea  id="nueva-direccion" cols="100" rows="10"></textarea>
+        </template>
+        <div>
+          <input v-model="check" type="checkbox"><span>He leido y acepto la politica de privacidad.</span>
+        </div>
+        <input type="submit" value="Enviar" v-if="check===true">
+        <p v-else>Debes de marchar el checkbox par poder enviar el formulario</p>
+</form>
+
+<br><br><hr>
+<ul>
+  <li v-for="usuario in nombreCompleto">{{usuario | mayusculas | acortado(20)}}</li>
+</ul>
+    </div>
+
+    <script>
+      // window.onload =()=> {
+      //   const form = document.querySelector("form");
+      //   const input = document.querySelector("input[type=text]");
+      //   const inputEdad = document.querySelector("input[type=number]")
+        
+      //   form.onsubmit=(evento)=>{
+      //     evento.preventDefault();
+      //     app1.usuario.personas.unshift({
+      //       nombre: input.value,
+      //       edad: inputEdad.value
+      //     });
+      //     input.value=null;
+      //     inputEdad.value=null;
+      //   }
+
+      //     }
+
+    </script>
+    <script>
+        const app1 = new Vue({
+
+          created(){
+            //  var url="https://jsonplaceholder.typicode.com/users";
+            
+            //  fetch(url).then(respuesta=>respuesta.json()).then(respuesta=> this.usuarios=respuesta)
+            fetch(this.url).then(respuesta=>respuesta.json()).then(respuesta=>this.usuarios=respuesta.results.map(usuario=>usuario.name))
+
+
+          },
+
+          el: "#app1",
+          mounted(){
+            axios.get(this.url).then(respuesta=> this.tareas= respuesta.data).catch(error=>console.error(error));
+          },
+
+            data:{
+              // url:'https://randomuser.me/api/?results=50',
+              url:'https://jsonplaceholder.typicode.com/todos',
+            enlace: "http://www.vuejs.org",
+            baseUrl:'https://placekitten.com',
+            ancho: 50 ,
+            alto: 50 ,
+            usuario: {
+              personas:[
+                {nombre: 'Javi', edad: 25},
+                {nombre: 'Diana', edad: 26},
+                {nombre: 'Sergio', edad: 27},
+                {nombre: 'Miguel', edad: 28},
+                
+              ]
+            },
+            usuarios: [],
+            edad: 0,
+            busqueda: '',
+            nuevoNombre: '',
+            nuevaEdad: '',
+            password:'',
+            estado: "Introduce nueva contraseña...",
+            novalidos:[
+
+            "admin",
+            "12345",
+            "password"
+            ],
+            check:false,
+            direccion:'misma',
+            
+            },
+
+            watch:{
+              password(nuevo,antiguo){
+                if(this.novalidos.indexOf(nuevo)>-1){
+                  this.estado="Contraseña no valida";
+                  return false
+                }
+                if(nuevo.length<5){
+                  this.estado="La contraseña debe de tener 5 caracteres";
+                  return false;
+                }else{
+                  this.estado="Contraseña Correcta";
+                }
+                
+              }
+            },
+
+            methods:{
+                saveUser(evento){
+                  evento.preventDefault();
+                  this.usuario.personas.unshift({
+                    nombre: this.nuevoNombre,
+                    edad: this.nuevaEdad,
+                  });
+
+                  this.nuevaEdad=null;
+                  this.nuevoNombre=null;
+                }
+            },
+
+            computed:{
+               urlCompleta(){
+               
+                  return this.baseUrl + '/' + (this.ancho * 3) + '/' + (this.alto * 3);
+               return `${this.baseUrl}/${this.ancho *3}/${this.alto*3}`;
+                
+               },
+
+
+              filtroEdad(){
+                
+                return this.usuario.personas.filter(persona=>{
+                  console.log(this.personas)
+                  return persona.edad <= this.edad  && persona.nombre.includes(this.busqueda);
+                })
+              },
+
+              nombreCompleto(){
+                return this.usuarios.map(usuario=> "Nombre "+ usuario.title +" "+ usuario.first +" "+ usuario.last)
+              }
+
+            },
+
+            filters:{
+              mayusculas(datos){
+                return datos.toUpperCase();
+              },
+              acortado(datos,cantidad){
+                return datos.substring(0,cantidad) + '...';
+              }
+
+            }
+
+          
+
+            
+
+            
+        });
+
+        Vue.config.devtools = true;
+
+    </script>
+   
   </body>
 </html>

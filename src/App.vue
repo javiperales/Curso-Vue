@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
+     <img alt="Vue logo" src="./assets/logo.png">
     <HelloWorld msg="Probando la template"/>
     <h4>Probando commit </h4>
     <br>
@@ -10,12 +10,14 @@
 </template>
 
 <script>
+//import Index from '../public/index.html'
 import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    HelloWorld,
+    //Index
   }
 }
 </script>
